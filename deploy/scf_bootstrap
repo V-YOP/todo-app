@@ -1,0 +1,2 @@
+#!/bin/bash
+/var/lang/java8/bin/java -Dserver.port=9000 -Dspring.profiles.active=prod -jar todoapp-latest.jar

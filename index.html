@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+落叶捎来讯息：<span id="msg">Fetching...</span>
+
+<script>
+const path = "//service-k7zugq20-1259498433.gz.apigw.tencentcs.com/release/"
+axios.get(path).then(data => {
+    document.getElementById("msg").innerText = data.data
+})
+</script>
+</body>
+</html>
