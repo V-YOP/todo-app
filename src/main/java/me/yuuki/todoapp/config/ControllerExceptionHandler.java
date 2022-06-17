@@ -1,6 +1,6 @@
 package me.yuuki.todoapp.config;
 
-import me.yuuki.todoapp.dto.ClientException;
+import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.dto.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +10,6 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {

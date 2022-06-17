@@ -1,4 +1,4 @@
-package me.yuuki.todoapp.dto;
+package me.yuuki.todoapp.exception;
 
 /**
  * 代表客户端的异常，将抛出40x错误
