@@ -11,6 +11,9 @@ import static me.yuuki.todoapp.property.OSSProperty.OSSTarget.MOCK;
 @Component
 @ConfigurationProperties("oss")
 public class OSSProperty {
+
+    private Boolean enabled = false;
+
     /**
      * Bucket所在地域对应的Endpoint。以华东1（杭州）为例，Endpoint填写为https://oss-cn-hangzhou.aliyuncs.com
      */
@@ -37,6 +40,10 @@ public class OSSProperty {
 
     @PostConstruct
     private void nullCheck() {
+        if (!enabled) {
+            return;
+        }
+
         Assert.notNull(ossTarget, "配置项 oss.oss-target 必须被给定！");
         Assert.notNull(bucketName, "配置项 oss.bucket-name 必须被给定！");
 
@@ -47,6 +54,14 @@ public class OSSProperty {
         Assert.notNull(accessKeyId, "配置项 oss.access-key-id 必须被给定！");
         Assert.notNull(accessKeySecret, "配置项 oss.access-key-secret 必须被给定！");
         Assert.notNull(maxSize, "配置项 oss.max-size 必须被给定！");
+    }
+
+    public Boolean enabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Integer getMaxSize() {

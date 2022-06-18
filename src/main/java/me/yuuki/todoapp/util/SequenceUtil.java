@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * <p />存储路径将为 system/seq/{key}
  */
-@Component
 public class SequenceUtil {
 
     private static final long STEP = 500;

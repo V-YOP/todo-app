@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<!-- TODO 待续！ -->
+<!-- 这个dtd可以让IDEA去fetch，从而能够给出补全 -->
+
+<!-- 该文件是mybatis-generator的配置文件，该配置文件默认命名为generatorConfig.xml 并放置在classpath下 -->
+
+<!-- generatorConfiguration标签是根标签，就像html标签 -->
+<generatorConfiguration>
+    <!-- properties标签用于引入外部的配置文件，其中resource用于引入classpath下的文件，url可引入文件系统或远程配置文件，应当没有使用必要 -->
+    <properties resource="application-dev.properties"/>
+
+    <!-- classPathEntry 用于引入特定jar包，主要用于引入driver -->
+    <!-- 这玩意有必要手动去配置，下面引入了mysql和oracle的jar -->
+    <classPathEntry location="${user.home}/.m2/repository/mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar"/>
+
+    <!-- context，即环境，可以认为就是一个配置集，运行时可以选择通过id选择特定上下文 -->
+    <!-- targetRuntime 指代运行时环境，Mybatis3是默认值，MyBatis3Simple不生成Example -->
+    <!-- defaultModelType定义生成实体类的结构，flat表示使用扁平结构，一般如此 -->
+    <context id="simple" targetRuntime="MyBatis3" defaultModelType="flat">
+        <!-- property标签用于覆盖一些配置，也用于定义待重用的字符串变量（可以通过${}引用） -->
+        <!-- 这里定义了自动添加分隔符的配置：如果表名或字段名和关键字重名或有空格，就加入分隔符 -->
+        <!-- 分隔符对mysql来说是`，对oracle，是"，对SQL Server，是[和] -->
+        <!-- 字符串中若要使用引号，可以使用'"'，"'"的形式，也可用 &apos; 和 &quot; 指代单引号，双引号 -->
+        <!-- ! 另外，&是 &amp; -->
+        <property name="autoDelimitKeywords" value="true" />
+        <property name="beginningDelimiter" value="&quot;" />
+        <property name="endingDelimiter" value="&quot;"/>
+
+        <property name="remarksReporting" value="true"/>
+
+        <!-- 指定生成java文件的编码，一般没啥必要 -->
+        <property name="javaFileEncoding" value="UTF-8"/>
+
+        <!-- 关于生成的注释的配置，注释一般没有什么值得注意的信息，不如自己重写 -->
+        <commentGenerator>
+            <!-- 不生成任何注释 -->
+            <property name="suppressAllComments" value="false"/>
+            <!-- 注释中不提供时间戳 -->
+            <property name="suppressDate" value="true"/>
+            <!-- 添加数据库的备注，需要Driver支持且JDBC Url进行一些额外配置才能使用 -->
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+
+        <!-- jdbcConnection，顾名思义！其中connectionURL是jdbc url的形式 -->
+        <!-- TODO 一些影响行为的JDBC配置，如字段大小写等 -->
+        <jdbcConnection driverClass="${spring.datasource.driverClassName}"
+                        connectionURL="${spring.datasource.url}"
+                        userId="${spring.datasource.username}"
+                        password="${spring.datasource.password}">
+            <!-- oracle 需要此配置才能获取到数据库中的注释 -->
+            <property name="remarksReporting" value="true"/>
+        </jdbcConnection>
+
+        <!-- javaModelGenerator 设置生成实体类的配置 -->
+        <!-- targetPackage 顾名思义 -->
+        <!-- targetProject 需要指向java源代码路径，可以是绝对路径也可以是相对路径（工作目录默认是module根目录，即该pom所在） -->
+        <!-- 这玩意居然还能配置生成不可变类……但使用不可变类会导致必须使用构造器入参，这在工程中可能会造成各种问题 -->
+        <javaModelGenerator targetPackage="me.yuuki.todoapp.entity" targetProject="src/main/java"/>
+
+        <!-- sqlMapGenerator 生成 mapper XML 文件 -->
+        <sqlMapGenerator targetPackage="me.yuuki.todoapp.mapper" targetProject="src/main/java" />
+
+        <!-- javaClientGenerator 生成对应XML的接口类 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="me.yuuki.todoapp.mapper" targetProject="src/main/java"/>
+
+        <!-- table 标签代表要生成相应代码的表，一个表一个table标签，全部表可以用 % -->
+        <!-- schema 即 schema，如果配置了，则生成的表名会类似 shcema.tableName，相同的配置还有catalog -->
+        <!-- 如果不同schema，catalog（或database）中均有该表，可能会生成多个重复文件，即使限定了数据库名等仍旧会这样， 
+             为此，应当显式指定 schema，catalog 以唯一确定一张表 -->
+        <!-- TODO schema 和 catalog 究竟是什么？此书描述的好像不太对 -->
+
+        <!-- 关于分隔符的两个配置：delimitIdentifiers，delimitAllColumns -->
+        <table tableName="task_t" domainObjectName="TaskEntity">
+            <!-- generatedKey，即自动生成主键，其会在SQL中插入selectKey标签 -->
+            <!-- generatedKey 只能出现一次 -->
+            <!-- sqlStatement可以为一些特殊值，如MySql，此时会被额外对待 -->
+            <!-- oracle这样的是插入前获取主键，mysql（自增）这样的是插入后获取主键 -->
+            <generatedKey column="id" sqlStatement="mysql" />
+        </table>
+        <table tableName="task_tag_t" domainObjectName="TaskTag">
+            <generatedKey column="id" sqlStatement="mysql" />
+        </table>
+        <table tableName="user_t" domainObjectName="User"></table>
+    </context>
+</generatorConfiguration>

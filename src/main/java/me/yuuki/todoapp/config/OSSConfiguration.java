@@ -4,10 +4,12 @@ import me.yuuki.todoapp.property.OSSProperty;
 import me.yuuki.todoapp.util.oss.AliyunOSSUtilImpl;
 import me.yuuki.todoapp.util.oss.MockOSSUtilImpl;
 import me.yuuki.todoapp.util.oss.OSSUtil;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConditionalOnProperty(name = "oss.enabled", havingValue = "true")
 public class OSSConfiguration {
     private final OSSProperty ossProperty;
 
@@ -25,8 +27,5 @@ public class OSSConfiguration {
             case MOCK:
                 return new MockOSSUtilImpl(ossProperty);
         }
-
     }
-
-
 }
