@@ -85,6 +85,17 @@ public final class Task {
     }
 
     /**
+     * 解析 todo_.txt 语法的字符串到 Task，其中id将被设置为-1
+     *
+     * @param str 原字符串
+     * @return 对应 Task 对象
+     * @throws IllegalArgumentException 如果解析失败则抛出该异常
+     */
+    public static Task parse(String str) {
+        return parse(str, -1);
+    }
+
+    /**
      * 解析 todo_.txt 语法的字符串到 Task，这是创建 Task 的唯一入口
      *
      * @param str 原字符串
@@ -263,7 +274,7 @@ public final class Task {
                                 done ? "X" : null,
                                 priority != Priority.NONE ? String.format("(%s)", priority.toString()) : null,
                                 getEndDate().map(dateFormat::format).orElse(null),
-                                getEndDate().map(dateFormat::format).orElse(null)),
+                                getStartDate().map(dateFormat::format).orElse(null)),
                         descriptionTokens.stream())
                 .filter(Objects::nonNull).collect(Collectors.joining(" "));
     }

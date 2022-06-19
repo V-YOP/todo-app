@@ -1,4 +1,4 @@
-package me.yuuki.todoapp.util;
+package me.yuuki.todoapp.util.oss;
 
 import me.yuuki.todoapp.util.oss.OSSUtil;
 import org.springframework.beans.factory.annotation.Autowired;

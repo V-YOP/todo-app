@@ -16,7 +16,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.Arrays;
 import java.util.Collections;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.profiles.active=test")
 public class TaskParseTest {
 
     private ObjectMapper objectMapper;
@@ -78,6 +78,13 @@ public class TaskParseTest {
 
         System.out.println(objectMapper.readValue(objectMapper.writeValueAsString(wrap), MultiValueMapWrap.class)
                 .data);
+    }
+
+    @Test
+    void dateTest() {
+        System.out.println(Task.parse("x wochao").debugFormat());
+        System.out.println(Task.parse("2099-02-12 wochao").debugFormat());
+        System.out.println(Task.parse("2099-02-12 2011-02-11").debugFormat());
     }
 
     private static class MultiValueMapWrap {

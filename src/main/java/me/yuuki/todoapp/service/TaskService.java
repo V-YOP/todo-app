@@ -47,7 +47,7 @@ public interface TaskService {
      * @param userId 用户ID
      * @return 用户的所有Task
      */
-    List<Task> selectWorkingTask(String userId);
+    List<Task> selectUnfinishedTask(String userId);
 
     /**
      * 返回所有未完成且当前日期在起始日期和终止日期之间的 Task，其中若终止时间为NULL，则视为无穷远
@@ -89,7 +89,7 @@ public interface TaskService {
      * 添加 Task，Task的userId字段将被用于设置Task对应用户
      * @return 生成的Task的ID
      */
-    long addTask(Task task);
+    long addTask(String userId, Task task);
 
     /**
      * 删除Task

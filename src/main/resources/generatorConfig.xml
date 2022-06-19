@@ -9,8 +9,6 @@
 
 <!-- generatorConfiguration标签是根标签，就像html标签 -->
 <generatorConfiguration>
-    <!-- properties标签用于引入外部的配置文件，其中resource用于引入classpath下的文件，url可引入文件系统或远程配置文件，应当没有使用必要 -->
-    <properties resource="application-dev.properties"/>
 
     <!-- classPathEntry 用于引入特定jar包，主要用于引入driver -->
     <!-- 这玩意有必要手动去配置，下面引入了mysql和oracle的jar -->
@@ -46,10 +44,10 @@
 
         <!-- jdbcConnection，顾名思义！其中connectionURL是jdbc url的形式 -->
         <!-- TODO 一些影响行为的JDBC配置，如字段大小写等 -->
-        <jdbcConnection driverClass="${spring.datasource.driverClassName}"
-                        connectionURL="${spring.datasource.url}"
-                        userId="${spring.datasource.username}"
-                        password="${spring.datasource.password}">
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/db?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=true&amp;serverTimezone=Asia/Shanghai"
+                        userId="root"
+                        password="root">
             <!-- oracle 需要此配置才能获取到数据库中的注释 -->
             <property name="remarksReporting" value="true"/>
         </jdbcConnection>
@@ -76,12 +74,14 @@
         <table tableName="task_t" domainObjectName="TaskEntity">
             <!-- generatedKey，即自动生成主键，其会在SQL中插入selectKey标签 -->
             <!-- generatedKey 只能出现一次 -->
-            <!-- sqlStatement可以为一些特殊值，如MySql，此时会被额外对待 -->
+            <!-- sqlStatement可以为一些特殊值，如MySQL，此时会被额外对待 -->
             <!-- oracle这样的是插入前获取主键，mysql（自增）这样的是插入后获取主键 -->
-            <generatedKey column="id" sqlStatement="mysql" />
+            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" type="post" identity="true" />
+            <columnOverride column="id" javaType="java.lang.Long"></columnOverride>
         </table>
         <table tableName="task_tag_t" domainObjectName="TaskTag">
-            <generatedKey column="id" sqlStatement="mysql" />
+            <generatedKey column="id" sqlStatement="SELECT LAST_INSERT_ID()" type="post" identity="true" />
+            <columnOverride column="id" javaType="java.lang.Long"></columnOverride>
         </table>
         <table tableName="user_t" domainObjectName="User"></table>
     </context>

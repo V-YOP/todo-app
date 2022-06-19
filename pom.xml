@@ -40,7 +40,6 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.23</version>
-			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
@@ -95,6 +94,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+<!--
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+		-->
 	</dependencies>
 
 	<build>
@@ -141,6 +148,22 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<resources>
+			<!-- 似乎定义了自己的resources后原来的玩意会被覆盖（大坑啊！），显式指定一下 -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.*</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<!-- XML 不拷贝的话Mybatis就别想用了 -->
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 
 </project>
