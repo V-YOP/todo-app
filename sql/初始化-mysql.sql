@@ -12,7 +12,7 @@ create table task_t
     id               int auto_increment,
     done             tinyint(1)     not null,
     priority         char          null,
-    start_date       date          not null,
+    start_date       date          null,
     end_date         date          null,
     task_description varchar(1024) not null comment '除是否完成，优先级，时间之外的东西，其中KVTag需要另外存储',
     user_id          varchar(32)   not null,

@@ -106,4 +106,13 @@ public interface TaskService {
      * @throws me.yuuki.todoapp.exception.ClientException 如果Task不存在或Task不属于该用户，或该Task已经被完成
      */
     void doneTask(String userId, long taskId);
+
+    /**
+     * 获取在一段日期中任意一天 valid 的Task
+     * @param userId 用户ID
+     * @param startDate 起始日期
+     * @param endDate   结束日期
+     * @return 这段日期中valid的Task
+     */
+    List<Task> selectValidTaskPeriod(String userId, Date startDate, Date endDate);
 }

@@ -3,10 +3,12 @@ package me.yuuki.todoapp.controller;
 import me.yuuki.todoapp.dto.Result;
 import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.model.Task;
+import me.yuuki.todoapp.model.TaskParser;
 import me.yuuki.todoapp.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,13 @@ public class TaskTestController {
     private static final String USER_ID = "TEST_00000000001";
 
     private TaskService taskService;
+
+    private TaskParser taskParser;
+
+    @Autowired
+    public void setTaskParser(TaskParser taskParser) {
+        this.taskParser = taskParser;
+    }
 
     @Autowired
     public void setTaskService(TaskService taskService) {
@@ -53,7 +62,7 @@ public class TaskTestController {
 
         Task task;
         try {
-            task = Task.parse(taskStr);
+            task = taskParser.parse(taskStr);
         } catch (Exception e) {
             throw new ClientException("Task 解析失败！" + e.getLocalizedMessage());
         }

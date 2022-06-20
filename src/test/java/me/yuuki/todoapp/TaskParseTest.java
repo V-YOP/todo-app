@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import me.yuuki.todoapp.config.StringMultiValueMapDeserializer;
 import me.yuuki.todoapp.config.StringMultiValueMapSerializer;
 import me.yuuki.todoapp.model.Task;
+import me.yuuki.todoapp.model.TaskParser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,9 +27,17 @@ public class TaskParseTest {
         this.objectMapper = objectMapper;
     }
 
+    private TaskParser taskParser;
+
+    @Autowired
+    public void setTaskParser(TaskParser taskParser) {
+        this.taskParser = taskParser;
+        taskParser.setCustomizers(Collections.emptyList());
+    }
+
     @Test
     public void simple() {
-        Task task = Task.parse(
+        Task task = taskParser.parse(
                 "X (A) @下班后 +学习 Spring MVC"
                 , -1);
         System.out.println(task.debugFormat());
@@ -45,7 +54,7 @@ public class TaskParseTest {
 
     @Test
     public void fullFeature() {
-        Task parse = Task.parse(
+        Task parse = taskParser.parse(
                 "X (B) 2233-12-31 2021-06-28 @晚上 +学习 处理 Excel 的最佳实践 afterDone:delete"
                 , -1);
         System.out.println(parse.debugFormat());
@@ -53,7 +62,7 @@ public class TaskParseTest {
 
     @Test
     public void jsonSeDe() throws JsonProcessingException {
-        Task task = Task.parse(
+        Task task = taskParser.parse(
                 "X (B) 2043-12-31 @晚上 +学习 处理 Excel 的最佳实践 afterDone:delete"
                 , -1);
 
@@ -82,9 +91,9 @@ public class TaskParseTest {
 
     @Test
     void dateTest() {
-        System.out.println(Task.parse("x wochao").debugFormat());
-        System.out.println(Task.parse("2099-02-12 wochao").debugFormat());
-        System.out.println(Task.parse("2099-02-12 2011-02-11").debugFormat());
+        System.out.println(taskParser.parse("x wochao").debugFormat());
+        System.out.println(taskParser.parse("2099-02-12 wochao").debugFormat());
+        System.out.println(taskParser.parse("2099-02-12 2011-02-11").debugFormat());
     }
 
     private static class MultiValueMapWrap {

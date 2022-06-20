@@ -7,6 +7,7 @@ import me.yuuki.todoapp.mapper.TaskEntityMapper;
 import me.yuuki.todoapp.mapper.TaskTagMapper;
 import me.yuuki.todoapp.model.Task;
 import me.yuuki.todoapp.model.TaskComparator;
+import me.yuuki.todoapp.model.TaskParser;
 import me.yuuki.todoapp.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,13 @@ public class TaskServiceImpl implements TaskService {
     private TaskEntityMapper taskEntityMapper;
 
     private TaskTagMapper taskTagMapper;
+
+    private TaskParser taskParser;
+
+    @Autowired
+    public void setTaskParser(TaskParser taskParser) {
+        this.taskParser = taskParser;
+    }
 
     private TaskEntity toTaskEntity(String userId, Task task) {
         Assert.notNull(task, "Task不能为空！");
@@ -63,7 +71,7 @@ public class TaskServiceImpl implements TaskService {
             result.add(dateFormat.format(taskEntity.getStartDate()));
         }
         result.add(StringUtils.replace(taskEntity.getTaskDescription(), "\u0000", " "));
-        return Task.parse(result.toString(), taskEntity.getId());
+        return taskParser.parse(result.toString(), taskEntity.getId());
     }
 
     @Autowired
@@ -83,7 +91,7 @@ public class TaskServiceImpl implements TaskService {
             throw new ClientException("该Task不存在！");
         }
         if (!taskEntity.getUserId().equals(userId)) {
-            throw new ClientException("这好像不是你的 Task");
+            throw new ClientException("这好像不是你的 Task :(");
         }
         return toTask(taskEntity);
     }
@@ -91,7 +99,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> selectAllTask(String userId) {
         TaskEntityExample example = new TaskEntityExample();
-        example.createCriteria().andUserIdEqualTo(userId);
+        example.or().andUserIdEqualTo(userId);
         return taskEntityMapper.selectByExample(example).stream()
                 .map(this::toTask)
                 .sorted(TaskComparator.get())
@@ -101,7 +109,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> selectUnfinishedTask(String userId) {
         TaskEntityExample example = new TaskEntityExample();
-        example.createCriteria().andUserIdEqualTo(userId)
+        example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(false);
         return taskEntityMapper.selectByExample(example).stream()
                 .map(this::toTask)
@@ -118,7 +126,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> selectOutDatedTask(String userId) {
         TaskEntityExample example = new TaskEntityExample();
-        example.createCriteria().andUserIdEqualTo(userId)
+        example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(false)
                 .andEndDateLessThan(new Date());
         return taskEntityMapper.selectByExample(example).stream()
@@ -130,7 +138,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> selectFutureTask(String userId) {
         TaskEntityExample example = new TaskEntityExample();
-        example.createCriteria().andUserIdEqualTo(userId)
+        example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(false)
                 .andStartDateGreaterThan(new Date());
         return taskEntityMapper.selectByExample(example).stream()
@@ -142,7 +150,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> selectValidTask(String userId, Date date) {
         TaskEntityExample example = new TaskEntityExample();
-        example.createCriteria().andUserIdEqualTo(userId)
+        example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(false)
                 .andStartDateLessThanOrEqualTo(date)
                 .andEndDateGreaterThanOrEqualTo(date);
@@ -155,7 +163,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> selectDoneTask(String userId) {
         TaskEntityExample example = new TaskEntityExample();
-        example.createCriteria().andUserIdEqualTo(userId)
+        example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(true);
         return taskEntityMapper.selectByExample(example).stream()
                 .map(this::toTask)
@@ -191,4 +199,36 @@ public class TaskServiceImpl implements TaskService {
         entity.setDone(true);
         taskEntityMapper.updateByPrimaryKeySelective(entity);
     }
+
+    @Override
+    public List<Task> selectValidTaskPeriod(String userId, Date startDate, Date endDate) {
+        // 当Task的开始日期和结束日期同入参的startDate，endDate这两个时间段有任意重叠时则认为合法
+        // 需要处理下列情况：
+        // 1. task的开始和结束日期为null，这时候恒为真
+        // 2. task的开始日期为null，这时候检查入参的结束日期小于等于task的结束日期
+        // 3. task的开始日期在入参日期段中，或task的结束日期在入参的时间段中
+        // 4. 入参的开始日期在task的日期段中，或入参的结束日期在task的日期段中
+        TaskEntityExample example = new TaskEntityExample();
+
+        // 1
+        example.or().andStartDateIsNull().andEndDateIsNull();
+
+        // 2
+        example.or().andStartDateIsNull().andEndDateLessThanOrEqualTo(endDate);
+
+        // 3
+        example.or().andStartDateBetween(startDate, endDate);
+        example.or().andEndDateBetween(startDate, endDate);
+
+        // 4
+        example.or().andStartDateLessThanOrEqualTo(startDate).andEndDateGreaterThanOrEqualTo(startDate);
+        example.or().andStartDateLessThanOrEqualTo(endDate).andEndDateGreaterThanOrEqualTo(endDate);
+
+        return taskEntityMapper.selectByExample(example).stream()
+                .map(this::toTask)
+                .sorted(TaskComparator.get())
+                .collect(Collectors.toList());
+    }
+
+
 }

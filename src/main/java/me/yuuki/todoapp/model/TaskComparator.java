@@ -45,7 +45,7 @@ public class TaskComparator implements Comparator<Task> {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Date startDate = task.getStartDate().orElse(dateFormat.parse("1970-01-01"));
-            Date endDate   = task.getEndDate().orElse(startDate);
+            Date endDate   = task.getEndDate().orElse(dateFormat.parse("2099-12-31"));
             return getIntervalDays(startDate, endDate);
         } catch (ParseException e) {
             throw new RuntimeException(e);
