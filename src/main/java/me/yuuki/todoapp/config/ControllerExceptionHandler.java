@@ -11,6 +11,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
+
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
@@ -43,7 +45,15 @@ public class ControllerExceptionHandler {
     })
     ResponseEntity<Object> badRequest(MissingServletRequestParameterException e) {
         return ResponseEntity.badRequest()
-                .body(Result.fail(e.getMessage(), "入参错误！"));
+                .body(Result.fail(null, "入参错误！" + e.getMessage()));
+    }
+
+    @ExceptionHandler({
+            ConstraintViolationException.class
+    })
+    ResponseEntity<Object> badRequest(ConstraintViolationException e) {
+        return ResponseEntity.badRequest()
+                .body(Result.fail(null, "入参校验失败！" + e.getLocalizedMessage()));
     }
 
     @ExceptionHandler({
