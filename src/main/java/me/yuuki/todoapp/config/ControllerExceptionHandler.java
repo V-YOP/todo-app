@@ -56,6 +56,9 @@ public class ControllerExceptionHandler {
                 .body(Result.fail(null, "入参校验失败！" + e.getLocalizedMessage()));
     }
 
+    /**
+     * 客户端的异常，抛40x
+     */
     @ExceptionHandler({
             ClientException.class
     })
@@ -66,11 +69,11 @@ public class ControllerExceptionHandler {
 
 
     /**
-     * 其它异常
+     * 其它异常，这类异常基本代表着编码错误，或者有遗漏，如果是后者应当及时补全
      */
     @ExceptionHandler
     ResponseEntity<Object> handlerAllException(Throwable e) {
-        logger.error("未预料的异常", e);
+        logger.error("未被捕获到的异常：", e);
         if (debug) {
             return ResponseEntity
                     .internalServerError()

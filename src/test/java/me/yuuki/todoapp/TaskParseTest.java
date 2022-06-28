@@ -44,7 +44,7 @@ public class TaskParseTest {
         assert task.getDone();
         assert task.getPriority() == Task.Priority.A;
         assert !task.getEndDate().isPresent();
-        assert task.getStartDate().isPresent();
+        assert !task.getStartDate().isPresent();
         assert task.getContextTags().size() == 1;
         assert task.getContextTags().get(0).equalsIgnoreCase("下班后");
         assert task.getProjectTags().size() == 1;

@@ -14,16 +14,15 @@ public class TaskComparator implements Comparator<Task> {
 
     /**
      * 首先比较是否为同一个Task
-     *
+     * <p>
      * 如果不为同一个Task，则未完成的Task更前
-     *
+     * <p>
      * 如果完成情况相同，优先级越高的更前
-     *
+     * <p>
      * 如果优先级相同，开始和结束日期差距越小的越前
      *
      * @param o1 the first object to be compared.
      * @param o2 the second object to be compared.
-     * @return
      */
     @Override
     public int compare(Task o1, Task o2) {

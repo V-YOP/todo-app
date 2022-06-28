@@ -235,7 +235,7 @@ class TaskServiceTest {
 
         String userId = randomStr(32);
         taskService.addTask(userId, taskParser.parse(
-                "(A) 2099-01-01 1070-12-31 一个未来的task"
+                "(A) 2099-01-01 1970-12-31 一个未来的task"
         ));
         assert taskService.selectValidTaskPeriod(userId,
                 dateFormat.parse("1970-12-30"),
@@ -246,7 +246,5 @@ class TaskServiceTest {
         assert taskService.selectValidTaskPeriod(userId,
                 dateFormat.parse("1970-12-30"),
                 dateFormat.parse("2199-12-31")).size() == 1;
-
-
     }
 }

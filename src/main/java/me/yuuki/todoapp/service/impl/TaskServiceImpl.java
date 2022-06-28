@@ -16,6 +16,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -40,15 +41,23 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private TaskEntity toTaskEntity(String userId, Task task) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Assert.notNull(task, "Task不能为空！");
         TaskEntity taskEntity = new TaskEntity();
         taskEntity.setId(task.getId());
         taskEntity.setDone(task.getDone());
-        task.getStartDate().ifPresent(taskEntity::setStartDate);
-        task.getEndDate().ifPresent(taskEntity::setEndDate);
+        try {
+            taskEntity.setStartDate(task.getStartDate().orElse(dateFormat.parse("1970-01-01")));
+            taskEntity.setEndDate(task.getEndDate().orElse(dateFormat.parse("2099-12-31")));
+        } catch (ParseException e) {
+            throw new RuntimeException("impossible");
+        }
+
         taskEntity.setTaskDescription(String.join("\u0000", task.getDescriptionTokens()));
         if (task.getPriority() != Task.Priority.NONE) {
             taskEntity.setPriority(task.getPriority().toString());
+        } else {
+            taskEntity.setPriority("x");
         }
         taskEntity.setUserId(userId);
         return taskEntity;
@@ -61,13 +70,14 @@ public class TaskServiceImpl implements TaskService {
         if (taskEntity.getDone()) {
             result.add("x");
         }
-        if (taskEntity.getPriority() != null) {
+        if (!taskEntity.getPriority().equalsIgnoreCase("x")) {
             result.add("(" + taskEntity.getPriority() + ")");
         }
-        if (taskEntity.getEndDate() != null) {
+
+        if (!dateFormat.format(taskEntity.getEndDate()).equals("2099-12-31")) {
             result.add(dateFormat.format(taskEntity.getEndDate()));
         }
-        if (taskEntity.getStartDate() != null) {
+        if (!dateFormat.format(taskEntity.getEndDate()).equals("1970-01-01")) {
             result.add(dateFormat.format(taskEntity.getStartDate()));
         }
         result.add(StringUtils.replace(taskEntity.getTaskDescription(), "\u0000", " "));
@@ -174,7 +184,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public long addTask(String userId, Task task) {
         TaskEntity taskEntity = toTaskEntity(userId, task);
-        taskEntityMapper.insert(taskEntity);
+        taskEntityMapper.insertSelective(taskEntity);
         return taskEntity.getId();
     }
 
@@ -202,33 +212,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> selectValidTaskPeriod(String userId, Date startDate, Date endDate) {
-        // 当Task的开始日期和结束日期同入参的startDate，endDate这两个时间段有任意重叠时则认为合法
-        // 需要处理下列情况：
-        // 1. task的开始和结束日期为null，这时候恒为真
-        // 2. task的开始日期为null，这时候检查入参的结束日期小于等于task的结束日期
-        // 3. task的开始日期在入参日期段中，或task的结束日期在入参的时间段中
-        // 4. 入参的开始日期在task的日期段中，或入参的结束日期在task的日期段中
-        TaskEntityExample example = new TaskEntityExample();
-
-        // 1
-        example.or().andStartDateIsNull().andEndDateIsNull();
-
-        // 2
-        example.or().andStartDateIsNull().andEndDateLessThanOrEqualTo(endDate);
-
-        // 3
-        example.or().andStartDateBetween(startDate, endDate);
-        example.or().andEndDateBetween(startDate, endDate);
-
-        // 4
-        example.or().andStartDateLessThanOrEqualTo(startDate).andEndDateGreaterThanOrEqualTo(startDate);
-        example.or().andStartDateLessThanOrEqualTo(endDate).andEndDateGreaterThanOrEqualTo(endDate);
-
-        return taskEntityMapper.selectByExample(example).stream()
+        return taskEntityMapper.selectByPeriod(userId, startDate, endDate).stream()
                 .map(this::toTask)
                 .sorted(TaskComparator.get())
                 .collect(Collectors.toList());
     }
-
-
 }

@@ -67,13 +67,9 @@ public class TaskController {
 
     @PostMapping("add")
     Result<Long> add(@RequestParam(name = "task") String taskStr) {
-        Task task;
-        try {
-            task = taskParser.parse(taskStr);
-        } catch (Exception e) {
-            throw new ClientException("Task 字符串解析失败！" + e.getLocalizedMessage());
-        }
-
+        Task task = ClientException.tryMe(
+                () -> taskParser.parse(taskStr),
+                e -> "Task 字符串解析失败！" + e.getLocalizedMessage());
         return Result.ok(taskService.addTask(getUserId(), task));
     }
 

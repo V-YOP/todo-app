@@ -8,10 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan(basePackages = {
         "me.yuuki.todoapp.mapper"
 })
-public class TodoappApplication {
+public class TODOApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TodoappApplication.class, args);
+        SpringApplication.run(TODOApplication.class, args);
     }
 
 }

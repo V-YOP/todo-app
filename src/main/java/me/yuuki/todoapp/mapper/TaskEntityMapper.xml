@@ -300,4 +300,24 @@
       user_id = #{userId,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByPeriod" resultMap="BaseResultMap">
+    <!--
+         // 当Task的开始日期和结束日期同入参的startDate，endDate这两个时间段有任意重叠时则认为合法
+        // 需要处理下列情况：
+        // 1. task的开始和结束日期为null，这时候恒为真
+        // 2. task的开始日期为null，这时候检查入参的结束日期小于等于task的结束日期
+        // 3. task的开始日期在入参日期段中，或task的结束日期在入参的时间段中
+        // 4. 入参的开始日期在task的日期段中，或入参的结束日期在task的日期段中
+     -->
+    select <include refid="Base_Column_List" /> from task_t
+    where user_id = #{userId,jdbcType=INTEGER} and (
+           (start_date is null and end_date is null)
+        or (start_date is null and #{endDate,jdbcType=DATE} >= end_date)
+        or (start_date between #{startDate,jdbcType=DATE} and #{endDate,jdbcType=DATE})
+        or (end_date between #{startDate,jdbcType=DATE} and #{endDate,jdbcType=DATE})
+        or (#{startDate,jdbcType=DATE} >= start_date and end_date >= #{startDate,jdbcType=DATE})
+        or (#{endDate,jdbcType=DATE} >= start_date and end_date >= #{endDate,jdbcType=DATE})
+    )
+  </select>
 </mapper>

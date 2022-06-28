@@ -4,13 +4,11 @@ import me.yuuki.todoapp.entity.User;
 import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.mapper.UserMapper;
 import me.yuuki.todoapp.service.UserService;
-import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
 @Service
@@ -53,7 +51,7 @@ public class UserServiceImpl implements UserService {
         MessageDigest messageDigest;
         try {
             messageDigest = MessageDigest.getInstance("SHA-256");
-            messageDigest.update(str.getBytes("UTF-8"));
+            messageDigest.update(str.getBytes(StandardCharsets.UTF_8));
             return byte2Hex(messageDigest.digest());
         } catch (Exception e) {
             throw new RuntimeException("这不应该发生");

@@ -58,11 +58,14 @@ public class TaskParser {
         return customizers.stream()
                 .filter(customizer -> CollectionUtils
                     .containsAny(task.getKvTags().keySet(), Arrays.asList(customizer.matchKVTag())))
-                .collect(() -> task, (acc, x) -> x.customize(acc), null);
+                .reduce(task, (acc, x) -> x.customize(acc), null);
     }
 
     /**
-     * 解析 todo_.txt 语法的字符串到 Task，这是创建 Task 的唯一入口
+     * 解析 todo_.txt 语法的字符串到 Task，这是创建 Task 的唯一入口。
+     * <p />
+     * str的模式见<a href="https://v-yop.fun/2022/05-04todo-txt%E7%AE%80%E6%98%8E%E6%95%99%E7%A8%8B.html">此</a>，
+     * 但考虑到需求，这里对其模式采取了一些更改：如果只出现一个日期，则认为是结束日期而非创建日期
      *
      * @param str 原字符串
      * @return 对应 Task 对象
@@ -70,8 +73,9 @@ public class TaskParser {
      */
     private Task parse_(String str, long id) {
         // 校验日期
+        // TODO 应当考虑更加丰富的方式，比如 TODAY，TOMORROW，1_DAY 等以方便使用（不过有可能前端会屏蔽这个细节……）
         Predicate<String> validDate = dateStr -> {
-            if (!dateStr.matches("[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")) {
+            if (!dateStr.matches("\\d\\d\\d\\d-\\d\\d-\\d\\d")) {
                 // TODO 应当能同时处理 1976/09/09，1976/9/9 的格式
                 return false;
             }

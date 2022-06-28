@@ -153,7 +153,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>me.yuuki.todoapp.TodoappApplication</mainClass>
+					<mainClass>me.yuuki.todoapp.TODOApplication</mainClass>
 					<outputDirectory>${project.basedir}/deploy</outputDirectory>
 					<outputFile>target.jar</outputFile>
 				</configuration>
