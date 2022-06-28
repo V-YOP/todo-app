@@ -11,12 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(properties = "spring.profiles.active=test")
 @Transactional
@@ -35,9 +30,9 @@ class TaskServiceTest {
     
 
     private String randomStr(int length) {
-        String tmp = "";
+        StringBuilder tmp = new StringBuilder();
         for (int i = 0; i < 1 + length / 32; i++) {
-            tmp += UUID.randomUUID().toString();
+            tmp.append(UUID.randomUUID().toString());
         }
         return tmp.substring(0, length);
     }

@@ -1,6 +1,5 @@
-package me.yuuki.todoapp.config;
+package me.yuuki.todoapp.exception;
 
-import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.dto.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
