@@ -1,5 +1,7 @@
 package me.yuuki.todoapp.service;
 
+import java.util.Optional;
+
 /**
  * 操作用户的Service，提供简单的注册，登陆，修改密码的操作。该Service不包含关于Session的操作！
  */
@@ -17,9 +19,9 @@ public interface UserService {
      * 用户ID和密码是否匹配
      * @param userId 用户ID
      * @param passwd 用户密码
-     * @return 若密码正确则返回 true，否则返回false
+     * @return 若密码正确则返回加盐后的 token
      */
-    boolean canLogin(String userId, String passwd);
+    Optional<String> canLogin(String userId, String passwd);
 
     /**
      * 更改密码

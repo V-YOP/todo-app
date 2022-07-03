@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -76,9 +77,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean canLogin(String userId, String passwd) {
+    public Optional<String> canLogin(String userId, String passwd) {
         User user = userMapper.selectByPrimaryKey(userId);
-        return user != null && Objects.equals(encrypt(passwd), user.getPasswd());
+        String encryptedPasswd = encrypt(passwd);
+        return Optional.of(encryptedPasswd)
+                .filter(v -> user != null && Objects.equals(encryptedPasswd, user.getPasswd()));
     }
 
     @Override

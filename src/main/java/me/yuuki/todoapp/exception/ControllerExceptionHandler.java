@@ -1,6 +1,9 @@
 package me.yuuki.todoapp.exception;
 
 import me.yuuki.todoapp.dto.Result;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +57,34 @@ public class ControllerExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(Result.fail(null, "入参校验失败！" + e.getLocalizedMessage()));
     }
+
+    @ExceptionHandler({
+            AuthenticationException.class
+    })
+    ResponseEntity<Object> loginFail(AuthenticationException e) {
+        return ResponseEntity.badRequest()
+                .body(Result.fail(null, "登陆失败，用户名或密码错误！"));
+    }
+
+
+    @ExceptionHandler({
+            UnauthenticatedException.class
+    })
+    ResponseEntity<Object> notLogin(UnauthenticatedException e) {
+        return ResponseEntity.badRequest()
+                .body(Result.fail(null, "你需要登陆以访问此接口！"));
+    }
+
+    @ExceptionHandler({
+            UnauthorizedException.class
+    })
+    ResponseEntity<Object> noPermission(UnauthorizedException e) {
+        return ResponseEntity.badRequest()
+                .body(Result.fail(null, "你没有权限访问此接口！"));
+    }
+
+
+
 
     /**
      * 客户端的异常，抛40x

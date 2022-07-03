@@ -7,13 +7,13 @@ public class Result<T> {
 
     public static final String DEFAULT_SUCCESS_MSG = "done!";
 
-    private final HttpStatus status;
+    private final String code;
     private final String message;
     private final T data;
 
-    public Result(HttpStatus status, String message, T data) {
+    public Result(String code, String message, T data) {
         Assert.notNull(message, "message 不能为 Null！");
-        this.status = status;
+        this.code = code;
         this.message = message;
         this.data = data;
     }
@@ -23,7 +23,7 @@ public class Result<T> {
      */
     public static <T> Result<T> ok(T data, String message) {
         return new Result<>(
-                HttpStatus.OK,
+                HttpStatus.OK.name(),
                 message,
                 data);
     }
@@ -40,7 +40,7 @@ public class Result<T> {
      */
     public static <T> Result<T> fail(T data, String message) {
         return new Result<>(
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.name(),
                 message,
                 data
         );
@@ -51,14 +51,14 @@ public class Result<T> {
      */
     public static <T> Result<T> error(T data, String message) {
         return new Result<>(
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR.name(),
                 message,
                 data
         );
     }
 
-    public HttpStatus getStatus() {
-        return status;
+    public String getCode() {
+        return code;
     }
 
     public String getMessage() {

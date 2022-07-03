@@ -36,17 +36,17 @@ class UserServiceTest {
         User user = userMapper.selectByPrimaryKey(userId);
         assert !user.getPasswd().equals("wochao");
         System.out.println(user.getPasswd());
-        assert userService.canLogin(userId, "wochao");
-        assert !userService.canLogin(userId, "wochAo");
+        assert userService.canLogin(userId, "wochao").isPresent();
+        assert !userService.canLogin(userId, "wochAo").isPresent();
     }
 
     @Test
     void changePasswd() {
         String userId = randomStr(32);
         userService.signup(userId, "a really bad man", "wochao");
-        assert userService.canLogin(userId, "wochao");
+        assert userService.canLogin(userId, "wochao").isPresent();
         assert userService.changePasswd(userId, "wochao", "ruaruarua");
-        assert userService.canLogin(userId, "ruaruarua");
+        assert userService.canLogin(userId, "ruaruarua").isPresent();
         assert !userService.changePasswd(userId, "www", "abccccccc");
     }
 }
