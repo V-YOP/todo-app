@@ -77,7 +77,7 @@ public class TaskServiceImpl implements TaskService {
         if (!dateFormat.format(taskEntity.getEndDate()).equals("2099-12-31")) {
             result.add(dateFormat.format(taskEntity.getEndDate()));
         }
-        if (!dateFormat.format(taskEntity.getEndDate()).equals("1970-01-01")) {
+        if (!dateFormat.format(taskEntity.getStartDate()).equals("1970-01-01")) {
             result.add(dateFormat.format(taskEntity.getStartDate()));
         }
         result.add(StringUtils.replace(taskEntity.getTaskDescription(), "\u0000", " "));

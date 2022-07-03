@@ -40,7 +40,7 @@ public class TaskController {
 
     @GetMapping("/get")
     @RequiresUser
-    Result<Task> get(@RequestParam(name = "task_id") long taskId) {
+    Result<Task> get(@RequestParam long taskId) {
         return Result.ok(taskService.select(getUserId(), taskId));
     }
 
@@ -73,6 +73,7 @@ public class TaskController {
     @PostMapping("add")
     @RequiresUser
     Result<Long> add(@RequestParam(name = "task") String taskStr) {
+        System.out.println(taskStr);
         Task task = ClientException.tryMe(
                 () -> taskParser.parse(taskStr),
                 e -> "Task 字符串解析失败！" + e.getLocalizedMessage());

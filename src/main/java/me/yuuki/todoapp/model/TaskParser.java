@@ -135,7 +135,7 @@ public class TaskParser {
                     done,
                     priority,
                     Optional.empty(),
-                    Optional.of(createdDate),
+                    Optional.empty(),
                     tokens,
                     Collections.emptyList(),
                     Collections.emptyList(),
