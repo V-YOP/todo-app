@@ -70,12 +70,21 @@ public class TaskController {
         return Result.ok(taskService.selectOutDatedTask(getUserId()));
     }
 
+    /**
+     * 添加 task，将数据包含在请求体中以避免麻烦的转义问题
+     * @param taskStr task字符串，必须为单例的数组
+     * @return 添加的task的id
+     */
     @PostMapping("add")
     @RequiresUser
-    Result<Long> add(@RequestParam(name = "task") String taskStr) {
-        System.out.println(taskStr);
+    Result<Long> add(@RequestBody List<String> taskStr) {
+        if (taskStr.isEmpty())
+            throw new ClientException("请求体数组不能为空");
+        if (taskStr.size() != 1)
+            throw new ClientException("请求体数组元素不能多于1个");
+
         Task task = ClientException.tryMe(
-                () -> taskParser.parse(taskStr),
+                () -> taskParser.parse(taskStr.get(0)),
                 e -> "Task 字符串解析失败！" + e.getLocalizedMessage());
         return Result.ok(taskService.addTask(getUserId(), task));
     }
