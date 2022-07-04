@@ -25,9 +25,7 @@ public class TaskParser {
     @Autowired(required = false)
     public void setCustomizers(List<TaskCustomizer> customizers) {
         customizers.stream().map(ClassUtils::getUserClass)
-                .forEach(clazz -> {
-                    logger.info("注册 TaskCustomizer：{}", clazz.getName());
-                });
+                .forEach(clazz -> logger.info("注册 TaskCustomizer：{}", clazz.getName()));
         this.customizers = customizers;
     }
 
@@ -176,9 +174,16 @@ public class TaskParser {
         }
 
         // 对日期的合法性进行校验
-        if (completedDate != null && createdDate != null && completedDate.compareTo(createdDate) < 0) {
-            throw new IllegalArgumentException("Task 的终止时间必须大于等于起始时间！" +
+        if (completedDate != null && createdDate != null) {
+            if (completedDate.compareTo(createdDate) < 0)
+                throw new IllegalArgumentException("Task 的终止时间必须大于等于起始时间！" +
                     String.format("当前输入终止时间：%s，起始时间：%s", dateFormat.format(completedDate), dateFormat.format(createdDate)));
+            if (dateFormat.format(completedDate).equals("2099-12-31")) {
+                throw new IllegalArgumentException("终止日期不能为 2099-12-31！");
+            }
+            if (dateFormat.format(createdDate).equals("1970-01-01")) {
+                throw new IllegalArgumentException("起始日期不能为 1970-01-01！");
+            }
         }
 
         List<String> descriptionTokens = tokens.subList(index, tokens.size());
