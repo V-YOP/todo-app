@@ -21,7 +21,7 @@ import javax.annotation.PostConstruct;
 public class ShiroConfig {
 
     @Bean
-    Realm realm() {
+    ShiroRealm realm() {
         return new ShiroRealm();
     }
 

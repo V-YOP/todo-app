@@ -1,20 +1,12 @@
 package me.yuuki.todoapp.service.realm;
 
-import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.service.UserService;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * register by {@link me.yuuki.todoapp.config.ShiroConfig}
@@ -45,11 +37,14 @@ public class ShiroRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        if (token == null)
-            throw new AuthenticationException("token can't be null!");
-        if (!(token instanceof UsernamePasswordToken))
-            throw new AuthenticationException("token should be instance of org.apache.shiro.authc" +
+        // 检查 token 是否为正确参数，抛出RuntimeException，因为这些异常来自编码而非用户输入
+        if (token == null) {
+            throw new NullPointerException("token can't be null!");
+        }
+        if (!(token instanceof UsernamePasswordToken)) {
+            throw new IllegalArgumentException("token should be instance of org.apache.shiro.authc" +
                     ".UsernamePasswordToken !");
+        }
         UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
 
         String username = usernamePasswordToken.getUsername();
@@ -57,7 +52,6 @@ public class ShiroRealm extends AuthorizingRealm {
         String strToken = userService.canLogin(username, password)
                 .orElseThrow(() -> new AuthenticationException("login failed"));
         usernamePasswordToken.setPassword(strToken.toCharArray());
-        SimpleAuthenticationInfo account = new SimpleAuthenticationInfo(username, strToken, this.getName());
-        return account;
+        return new SimpleAuthenticationInfo(username, strToken, this.getName());
     }
 }
