@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class ShiroConfig {
 
+    // 最佳实践：Bean的类型应当尽量窄
     @Bean
     ShiroRealm realm() {
         return new ShiroRealm();
