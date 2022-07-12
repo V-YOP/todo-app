@@ -1,5 +1,6 @@
 package me.yuuki.todoapp.controller;
 
+import me.yuuki.todoapp.dto.Result;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ public class HelloController {
     };
 
     @GetMapping(value = "/alive", produces = MediaType.TEXT_HTML_VALUE)
-    String alive() {
-        return String.format("<!DOCTYPE html><html><body><h1>%s</h1></body></html>", msgs[new Random().nextInt(msgs.length)]);
+    Result<Integer> alive() {
+        return Result.ok(42,  msgs[new Random().nextInt(msgs.length)]);
     }
 }
