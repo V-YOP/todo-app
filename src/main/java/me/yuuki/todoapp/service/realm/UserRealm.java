@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * register by {@link me.yuuki.todoapp.config.ShiroConfig}
  */
-public class ShiroRealm extends AuthorizingRealm {
+public class UserRealm extends AuthorizingRealm {
 
     UserService userService;
 

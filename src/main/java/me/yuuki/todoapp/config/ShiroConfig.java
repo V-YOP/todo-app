@@ -1,17 +1,12 @@
 package me.yuuki.todoapp.config;
 
-import me.yuuki.todoapp.service.realm.ShiroRealm;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.mgt.SecurityManager;
+import me.yuuki.todoapp.service.realm.UserRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
 
 /**
  * 对 Shiro 的配置，应尽量简单，不使用filter去直接拦截/login，/logout的请求，
@@ -20,10 +15,10 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class ShiroConfig {
 
-    // 最佳实践：Bean的类型应当尽量窄
+    // 奇怪的坑——realm的类型必须给定为Realm，否则会说authorizer这个bean找不到
     @Bean
-    ShiroRealm realm() {
-        return new ShiroRealm();
+    Realm userRealm() {
+        return new UserRealm();
     }
 
     /**

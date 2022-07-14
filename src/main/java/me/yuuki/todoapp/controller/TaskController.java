@@ -8,14 +8,18 @@ import me.yuuki.todoapp.model.TaskParser;
 import me.yuuki.todoapp.service.TaskService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Validated
 @RequestMapping("/task")
 public class TaskController {
 
@@ -77,12 +81,8 @@ public class TaskController {
      */
     @PostMapping("add")
     @RequiresUser
-    Result<Long> add(@RequestBody List<String> taskStr) {
-        if (taskStr.isEmpty())
-            throw new ClientException("请求体数组不能为空");
-        if (taskStr.size() != 1)
-            throw new ClientException("请求体数组元素不能多于1个");
-
+    Result<Long> add(@Size(min = 1, max = 1, message = "请求体数组大小必须为1！")
+                     @RequestBody List<@NotBlank(message = "输入字符串不能为空！") String> taskStr) {
         Task task = ClientException.tryMe(
                 () -> taskParser.parse(taskStr.get(0)),
                 e -> "Task 字符串解析失败！" + e.getLocalizedMessage());

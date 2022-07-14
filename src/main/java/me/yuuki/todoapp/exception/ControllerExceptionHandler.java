@@ -8,12 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
@@ -30,10 +32,10 @@ public class ControllerExceptionHandler {
             HttpRequestMethodNotSupportedException.class
     })
     ResponseEntity<Object> invalidRequestMethod(HttpRequestMethodNotSupportedException e) {
-        Result<Void> result = e.getSupportedMethods() == null ?
-                Result.fail(null, "HTTP请求方法错误！") :
-                Result.fail(null, "HTTP请求方法错误！合法方法：" +
-                        String.join(", ", e.getSupportedMethods()));
+        Result<Void> result =
+                Result.fail(null, e.getSupportedMethods() == null ?
+                    "HTTP请求方法错误！" :
+                    "HTTP请求方法错误！合法方法：" + String.join(", ", e.getSupportedMethods()));
         return ResponseEntity
                 .badRequest()
                 .body(result);
@@ -49,6 +51,18 @@ public class ControllerExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(Result.fail(null, "入参错误！" + e.getMessage()));
     }
+
+    /**
+     * 入参格式非法
+     */
+    @ExceptionHandler({
+            HttpMessageNotReadableException.class
+    })
+    ResponseEntity<Object> badRequest(HttpMessageNotReadableException e) {
+        return ResponseEntity.badRequest()
+                .body(Result.fail(null, "入参格式非法！" + e.getMessage()));
+    }
+
 
     @ExceptionHandler({
             ConstraintViolationException.class

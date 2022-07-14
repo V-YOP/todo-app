@@ -31,4 +31,11 @@ public class ClientException extends RuntimeException {
             throw new ClientException(msg.apply(e));
         }
     }
+
+    /**
+     * 将参数函数中抛出的异常包装成为ClientException
+     */
+    public static void convertAssert(FunctionUtil.RunnableEx body) {
+        tryMe(body, Throwable::getMessage);
+    }
 }
