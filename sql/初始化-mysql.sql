@@ -1,10 +1,9 @@
 create table user_t
 (
-    user_id  VARCHAR(32) not null comment '用户ID，登录用',
-    username VARCHAR(32) null comment '用户展示的ID',
-    passwd   VARCHAR(64) null comment '用户密码，需加密',
-    constraint user_t_pk
-        primary key (user_id)
+    user_id  varchar(32) not null comment '用户ID，登录用' primary key,
+    username varchar(32) not null comment '用户展示的ID，没啥意义',
+    passwd   varchar(64) not null comment '用户密码，需加密',
+    email    varchar(64) not null comment '用户的邮箱'
 );
 
 create table task_t
