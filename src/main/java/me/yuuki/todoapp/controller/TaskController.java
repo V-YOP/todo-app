@@ -44,7 +44,9 @@ public class TaskController {
 
     @GetMapping("/get")
     @RequiresUser
-    Result<Task> get(@RequestParam long taskId) {
+    Result<Task> get(
+            @Min(value = 0, message = "taskId 必须大于 0！")
+            @RequestParam long taskId) {
         return Result.ok(taskService.select(getUserId(), taskId));
     }
 
@@ -91,14 +93,18 @@ public class TaskController {
 
     @PostMapping("done")
     @RequiresUser
-    Result<Void> done(@RequestParam Long taskId) {
+    Result<Void> done(
+            @Min(value = 0, message = "taskId 必须大于 0！")
+            @RequestParam Long taskId) {
         taskService.doneTask(getUserId(), taskId);
         return Result.ok(null);
     }
 
     @PostMapping("del")
     @RequiresUser
-    Result<Void> del(@RequestParam Long taskId) {
+    Result<Void> del(
+            @Min(value = 0, message = "taskId 必须大于 0！")
+            @RequestParam Long taskId) {
         taskService.deleteTask(getUserId(), taskId);
         return Result.ok(null);
     }
