@@ -1,5 +1,7 @@
 package me.yuuki.todoapp.service;
 
+import me.yuuki.todoapp.entity.User;
+import me.yuuki.todoapp.entity.UserExample;
 import me.yuuki.todoapp.model.Task;
 import me.yuuki.todoapp.model.TaskParser;
 import org.junit.jupiter.api.Test;
@@ -7,10 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 @SpringBootTest(properties = "spring.profiles.active=test")
@@ -27,19 +33,14 @@ class TaskServiceTest {
     public void setTaskParser(TaskParser taskParser) {
         this.taskParser = taskParser;
     }
-    
 
-    private String randomStr(int length) {
-        StringBuilder tmp = new StringBuilder();
-        for (int i = 0; i < 1 + length / 32; i++) {
-            tmp.append(UUID.randomUUID().toString());
-        }
-        return tmp.substring(0, length);
+    private int randomInt() {
+        return new Random().nextInt(1000) + 1000000;
     }
 
     @Test
     void select() {
-        String userId = randomStr(32);
+        int userId = randomInt();
         long id = taskService.addTask(userId, taskParser.parse(
                 "X (A) 2022-09-20 2021-03-20 测试一下"
         ));
@@ -52,7 +53,7 @@ class TaskServiceTest {
 
     @Test
     void selectAllTask() {
-        String userId = randomStr(32);
+        int userId = randomInt();
         taskService.addTask(userId, taskParser.parse(
                 "X (A) 2022-09-20 2021-03-20 测试一下"
         ));
@@ -67,7 +68,7 @@ class TaskServiceTest {
 
     @Test
     void selectUnfinishedTask() {
-        String userId = randomStr(32);
+        int userId = randomInt();
         taskService.addTask(userId, taskParser.parse(
                 "X (A) 2022-09-20 2021-03-20 测试一下"
         ));
@@ -84,7 +85,7 @@ class TaskServiceTest {
 
     @Test
     void selectValidTask() {
-        String userId = randomStr(32);
+        int userId = randomInt();
 
         // valid
         taskService.addTask(userId, taskParser.parse(
@@ -114,7 +115,7 @@ class TaskServiceTest {
     @Test
     void selectOutDatedTask() {
 
-        String userId = randomStr(32);
+        int userId = randomInt();
         // valid
         taskService.addTask(userId, taskParser.parse(
                 "(A) 2099-09-20 测试一下"
@@ -137,7 +138,7 @@ class TaskServiceTest {
 
     @Test
     void selectFutureTask() {
-        String userId = randomStr(32);
+        int userId = randomInt();
         taskService.addTask(userId, taskParser.parse(
                 "(A) 2099-09-20 测试一下"
         ));
@@ -158,8 +159,7 @@ class TaskServiceTest {
     @Test
     void testSelectValidTask() throws ParseException {
 
-
-        String userId = randomStr(32);
+        int userId = randomInt();
         taskService.addTask(userId, taskParser.parse(
                 "(A) 2099-09-20 2088-02-12 一个未来的task"
         ));
@@ -174,7 +174,7 @@ class TaskServiceTest {
 
     @Test
     void selectDoneTask() {
-        String userId = randomStr(32);
+        int userId = randomInt();
         taskService.addTask(userId, taskParser.parse(
                 "(A) 2099-09-20 2088-02-12 一个未来的task"
         ));
@@ -188,7 +188,7 @@ class TaskServiceTest {
     @Test
     void deleteTask() {
 
-        String userId = randomStr(32);
+        int userId = randomInt();
         long id = taskService.addTask(userId, taskParser.parse(
                 "(A) 2099-09-20 2088-02-12 一个未来的task"
         ));
@@ -206,7 +206,7 @@ class TaskServiceTest {
     @Test
     void doneTask() {
 
-        String userId = randomStr(32);
+        int userId = randomInt();
         long id = taskService.addTask(userId, taskParser.parse(
                 "(A) 2099-09-20 2088-02-12 一个未来的task"
         ));
@@ -228,7 +228,7 @@ class TaskServiceTest {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        String userId = randomStr(32);
+        int userId = randomInt();
         taskService.addTask(userId, taskParser.parse(
                 "(A) 2099-01-01 1970-12-31 一个未来的task"
         ));

@@ -40,7 +40,7 @@ public class TaskServiceImpl implements TaskService {
         this.taskParser = taskParser;
     }
 
-    private TaskEntity toTaskEntity(String userId, Task task) {
+    private TaskEntity toTaskEntity(Integer userId, Task task) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Assert.notNull(task, "Task不能为空！");
         TaskEntity taskEntity = new TaskEntity();
@@ -95,7 +95,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task select(String userId, long taskId) {
+    public Task select(Integer userId, long taskId) {
         TaskEntity taskEntity = taskEntityMapper.selectByPrimaryKey(taskId);
         if (taskEntity == null) {
             throw new ClientException("该Task不存在！");
@@ -107,7 +107,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> selectAllTask(String userId) {
+    public List<Task> selectAllTask(Integer userId) {
         TaskEntityExample example = new TaskEntityExample();
         example.or().andUserIdEqualTo(userId);
         return taskEntityMapper.selectByExample(example).stream()
@@ -117,7 +117,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> selectUnfinishedTask(String userId) {
+    public List<Task> selectUnfinishedTask(Integer userId) {
         TaskEntityExample example = new TaskEntityExample();
         example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(false);
@@ -128,13 +128,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> selectValidTask(String userId) {
+    public List<Task> selectValidTask(Integer userId) {
         return selectValidTask(userId,
                 Date.from(LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
     }
 
     @Override
-    public List<Task> selectOutDatedTask(String userId) {
+    public List<Task> selectOutDatedTask(Integer userId) {
         TaskEntityExample example = new TaskEntityExample();
         example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(false)
@@ -146,7 +146,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> selectFutureTask(String userId) {
+    public List<Task> selectFutureTask(Integer userId) {
         TaskEntityExample example = new TaskEntityExample();
         example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(false)
@@ -158,7 +158,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> selectValidTask(String userId, Date date) {
+    public List<Task> selectValidTask(Integer userId, Date date) {
         TaskEntityExample example = new TaskEntityExample();
         example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(false)
@@ -171,7 +171,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> selectDoneTask(String userId) {
+    public List<Task> selectDoneTask(Integer userId) {
         TaskEntityExample example = new TaskEntityExample();
         example.or().andUserIdEqualTo(userId)
                 .andDoneEqualTo(true);
@@ -182,7 +182,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public long addTask(String userId, Task task) {
+    public long addTask(Integer userId, Task task) {
         TaskEntity taskEntity = toTaskEntity(userId, task);
         taskEntityMapper.insertSelective(taskEntity);
         return taskEntity.getId();
@@ -190,7 +190,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void deleteTask(String userId, long taskId) {
+    public void deleteTask(Integer userId, long taskId) {
         if (select(userId, taskId) == null) {
             throw new ClientException("没有这个 Task");
         }
@@ -199,7 +199,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void doneTask(String userId, long taskId) {
+    public void doneTask(Integer userId, long taskId) {
         Task task = select(userId, taskId);
         if (task.getDone()) {
             throw new ClientException("这个task已经完成了");
@@ -211,7 +211,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> selectValidTaskPeriod(String userId, Date startDate, Date endDate) {
+    public List<Task> selectValidTaskPeriod(Integer userId, Date startDate, Date endDate) {
         return taskEntityMapper.selectByPeriod(userId, startDate, endDate).stream()
                 .map(this::toTask)
                 .sorted(TaskComparator.get())

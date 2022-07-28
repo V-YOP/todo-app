@@ -33,42 +33,42 @@ public interface TaskService {
      * @return id对应task
      * @throws me.yuuki.todoapp.exception.ClientException 如果该task不存在，或task不属于该用户则抛出
      */
-    Task select(String userId, long taskId);
+    Task select(Integer userId, long taskId);
 
     /**
      * 查询特定用户的所有Task
      * @param userId 用户ID
      * @return 用户的所有Task
      */
-    List<Task> selectAllTask(String userId);
+    List<Task> selectAllTask(Integer userId);
 
     /**
      * 返回所有未完成，即done为false的Task
      * @param userId 用户ID
      * @return 用户的所有Task
      */
-    List<Task> selectUnfinishedTask(String userId);
+    List<Task> selectUnfinishedTask(Integer userId);
 
     /**
      * 返回所有未完成且当前日期在起始日期和终止日期之间的 Task，其中若终止时间为NULL，则视为无穷远
      * @param userId 用户ID
      * @return 用户的所有合法 Task
      */
-    List<Task> selectValidTask(String userId);
+    List<Task> selectValidTask(Integer userId);
 
     /**
      * 返回所有未完成且当前日期大于终止日期之间的 Task
      * @param userId 用户ID
      * @return 用户的所有过期 Task
      */
-    List<Task> selectOutDatedTask(String userId);
+    List<Task> selectOutDatedTask(Integer userId);
 
     /**
      * 返回所有未完成且当前日期小于起始日期之间的 Task
      * @param userId 用户ID
      * @return 用户的所有合法 Task
      */
-    List<Task> selectFutureTask(String userId);
+    List<Task> selectFutureTask(Integer userId);
 
     /**
      * 返回特定日期下的合法的 Task
@@ -76,20 +76,20 @@ public interface TaskService {
      * @param date 待查询的日期
      * @return 该用户该日期的所有合法 Task
      */
-    List<Task> selectValidTask(String userId, Date date);
+    List<Task> selectValidTask(Integer userId, Date date);
 
     /**
      * 返回所有完成的 Task
      * @param userId 用户ID
      * @return 该用户所有完成的 Task
      */
-    List<Task> selectDoneTask(String userId);
+    List<Task> selectDoneTask(Integer userId);
 
     /**
      * 添加 Task，Task的userId字段将被用于设置Task对应用户
      * @return 生成的Task的ID
      */
-    long addTask(String userId, Task task);
+    long addTask(Integer userId, Task task);
 
     /**
      * 删除Task
@@ -97,7 +97,7 @@ public interface TaskService {
      * @param taskId Task的id
      * @throws me.yuuki.todoapp.exception.ClientException 如果Task不存在或Task不属于该用户
      */
-    void deleteTask(String userId, long taskId);
+    void deleteTask(Integer userId, long taskId);
 
     /**
      * 完成Task
@@ -105,7 +105,7 @@ public interface TaskService {
      * @param taskId Task的id
      * @throws me.yuuki.todoapp.exception.ClientException 如果Task不存在或Task不属于该用户，或该Task已经被完成
      */
-    void doneTask(String userId, long taskId);
+    void doneTask(Integer userId, long taskId);
 
     /**
      * 获取在一段日期中任意一天 valid 的Task
@@ -114,5 +114,5 @@ public interface TaskService {
      * @param endDate   结束日期
      * @return 这段日期中valid的Task
      */
-    List<Task> selectValidTaskPeriod(String userId, Date startDate, Date endDate);
+    List<Task> selectValidTaskPeriod(Integer userId, Date startDate, Date endDate);
 }

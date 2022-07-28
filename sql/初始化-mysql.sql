@@ -1,9 +1,8 @@
 create table user_t
 (
-    user_id  varchar(32) not null comment '用户ID，登录用' primary key,
-    username varchar(32) not null comment '用户展示的ID，没啥意义',
+    user_id  int  auto_increment primary key,
+    email    varchar(64) unique not null comment '用户的邮箱，用于登陆和展示'
     passwd   varchar(64) not null comment '用户密码，需加密',
-    email    varchar(64) not null comment '用户的邮箱'
 );
 
 create table task_t
@@ -14,7 +13,7 @@ create table task_t
     start_date       date default '1970-01-01' not null,
     end_date         date default '2099-12-31' not null,
     task_description varchar(1024) not null comment '除是否完成，优先级，时间之外的东西，其中KVTag需要另外存储',
-    user_id          varchar(32)   not null,
+    user_id          int           not null,
     constraint task_t_pk
         primary key (id)
 );

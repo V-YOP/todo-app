@@ -108,6 +108,19 @@ public class ControllerExceptionHandler {
     }
 
     /**
+     * 可预期的服务端的异常，抛50x
+     */
+    @ExceptionHandler({
+            ServerException.class
+    })
+    ResponseEntity<Object> serverException(ServerException e) {
+        logger.error("服务器内部错误", e);
+        return ResponseEntity.badRequest()
+                .body(Result.error(null, e.getMessage()));
+    }
+
+
+    /**
      * 其它异常，这类异常基本代表着编码错误，或者有遗漏，如果是后者应当及时补全
      * <p>
      * TODO 考虑把这种错误持久化到数据库里？

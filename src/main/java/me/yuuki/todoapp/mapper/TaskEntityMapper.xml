@@ -12,7 +12,7 @@
     <result column="start_date" jdbcType="DATE" property="startDate" />
     <result column="end_date" jdbcType="DATE" property="endDate" />
     <result column="task_description" jdbcType="VARCHAR" property="taskDescription" />
-    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -145,7 +145,7 @@
       end_date, task_description, user_id
       )
     values (#{done,jdbcType=BIT}, #{priority,jdbcType=CHAR}, #{startDate,jdbcType=DATE}, 
-      #{endDate,jdbcType=DATE}, #{taskDescription,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}
+      #{endDate,jdbcType=DATE}, #{taskDescription,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="me.yuuki.todoapp.entity.TaskEntity">
@@ -194,7 +194,7 @@
         #{taskDescription,jdbcType=VARCHAR},
       </if>
       <if test="userId != null">
-        #{userId,jdbcType=VARCHAR},
+        #{userId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -234,7 +234,7 @@
         task_description = #{record.taskDescription,jdbcType=VARCHAR},
       </if>
       <if test="record.userId != null">
-        user_id = #{record.userId,jdbcType=VARCHAR},
+        user_id = #{record.userId,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null">
@@ -253,7 +253,7 @@
       start_date = #{record.startDate,jdbcType=DATE},
       end_date = #{record.endDate,jdbcType=DATE},
       task_description = #{record.taskDescription,jdbcType=VARCHAR},
-      user_id = #{record.userId,jdbcType=VARCHAR}
+      user_id = #{record.userId,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -281,7 +281,7 @@
         task_description = #{taskDescription,jdbcType=VARCHAR},
       </if>
       <if test="userId != null">
-        user_id = #{userId,jdbcType=VARCHAR},
+        user_id = #{userId,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -297,7 +297,7 @@
       start_date = #{startDate,jdbcType=DATE},
       end_date = #{endDate,jdbcType=DATE},
       task_description = #{taskDescription,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=VARCHAR}
+      user_id = #{userId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -313,11 +313,11 @@
     select <include refid="Base_Column_List" /> from task_t
     where user_id = #{userId,jdbcType=INTEGER} and (
            (start_date is null and end_date is null)
-        or (start_date is null and #{endDate,jdbcType=DATE} >= end_date)
+        or (start_date is null and #{endDate,jdbcType=DATE} &gt;= end_date)
         or (start_date between #{startDate,jdbcType=DATE} and #{endDate,jdbcType=DATE})
         or (end_date between #{startDate,jdbcType=DATE} and #{endDate,jdbcType=DATE})
-        or (#{startDate,jdbcType=DATE} >= start_date and end_date >= #{startDate,jdbcType=DATE})
-        or (#{endDate,jdbcType=DATE} >= start_date and end_date >= #{endDate,jdbcType=DATE})
+        or (#{startDate,jdbcType=DATE} &gt;= start_date and end_date &gt;= #{startDate,jdbcType=DATE})
+        or (#{endDate,jdbcType=DATE} &gt;= start_date and end_date &gt;= #{endDate,jdbcType=DATE})
     )
   </select>
 </mapper>

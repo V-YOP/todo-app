@@ -1,5 +1,6 @@
 package me.yuuki.todoapp.controller;
 
+import com.wf.captcha.utils.CaptchaUtil;
 import me.yuuki.todoapp.dto.Result;
 import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.service.UserService;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Email;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,21 +33,35 @@ public class UserController {
 
     @PostMapping("login")
     public Result<Void> login(
-            @RequestParam String userId,
+            @Email
+            @RequestParam String email,
             @RequestParam String passwd,
             @RequestParam(defaultValue = "false") Boolean rememberMe) {
         Subject subject = SecurityUtils.getSubject();
-        subject.login(new UsernamePasswordToken(userId, passwd, rememberMe));
+        subject.login(new UsernamePasswordToken(email, passwd, rememberMe));
         return Result.ok(null);
     }
 
-    // TODO 暂且不暴露注册接口
-    // @PostMapping("signup")
+    /**
+     * 注册接口，必须使用验证码等手段防止有人捣乱
+     * @param email
+     * @param verCode
+     * @return
+     */
+    @PostMapping("signup")
     public ResponseEntity<Void> signup(
-            @RequestParam String userId,
-            @RequestParam String userName,
-            @RequestParam String passwd) {
-        userService.signup(userId,userName,passwd);
+            @Email
+            @RequestParam String email,
+            @RequestParam String passwd,
+            @RequestParam String verCode,
+            HttpServletRequest request) {
+        if (!CaptchaUtil.ver(verCode, request)) {
+            CaptchaUtil.clear(request);
+            throw new ClientException("验证码不正确！");
+        }
+
+
+        userService.signup(email, passwd);
         return ResponseEntity.ok(null);
     }
 

@@ -7,29 +7,30 @@ import java.util.Optional;
  */
 public interface UserService {
     /**
-     * 用户注册
-     * @param userId 用户ID
-     * @param userName 用户名
-     * @param passwd 用户密码
+     * 注册用户
+     * @param email    用户 email
+     * @param passwd   用户密码
      * @throws me.yuuki.todoapp.exception.ClientException 如果用户ID已存在，或用户名，用户密码不合法
      */
-    void signup(String userId, String userName, String passwd);
+    void signup(String email, String passwd);
 
     /**
-     * 用户ID和密码是否匹配
-     * @param userId 用户ID
+     * 检查email和密码是否匹配
+     * @param email  用户 email
      * @param passwd 用户密码
      * @return 若密码正确则返回加盐后的 token
      */
-    Optional<String> canLogin(String userId, String passwd);
+    Optional<String> canLogin(String email, String passwd);
 
     /**
      * 更改密码
-     * @param userId 用户ID
+     * @param email     用户 email
      * @param oldPasswd 旧密码
      * @param newPasswd 新密码
      * @return 如果更改密码成功则返回true，否则返回false
      * @throws me.yuuki.todoapp.exception.ClientException 如果新密码不合法
      */
-    boolean changePasswd(String userId, String oldPasswd, String newPasswd);
+    boolean changePasswd(String email, String oldPasswd, String newPasswd);
+
+
 }

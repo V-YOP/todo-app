@@ -47,11 +47,11 @@ public class UserRealm extends AuthorizingRealm {
         }
         UsernamePasswordToken usernamePasswordToken = (UsernamePasswordToken) token;
 
-        String username = usernamePasswordToken.getUsername();
+        String email = usernamePasswordToken.getUsername();
         String password = String.valueOf(usernamePasswordToken.getPassword());
-        String strToken = userService.canLogin(username, password)
+        String strToken = userService.canLogin(email, password)
                 .orElseThrow(() -> new AuthenticationException("login failed"));
         usernamePasswordToken.setPassword(strToken.toCharArray());
-        return new SimpleAuthenticationInfo(username, strToken, this.getName());
+        return new SimpleAuthenticationInfo(email, strToken, this.getName());
     }
 }

@@ -23,8 +23,8 @@ import java.util.Optional;
 @RequestMapping("/task")
 public class TaskController {
 
-    private String getUserId() {
-        return Optional.ofNullable((String) SecurityUtils.getSubject().getPrincipal())
+    private Integer getUserId() {
+        return Optional.ofNullable((Integer) SecurityUtils.getSubject().getPrincipal())
                 .orElseThrow(() -> new RuntimeException("该接口需要添加鉴权！"));
     }
 
