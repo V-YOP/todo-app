@@ -1,7 +1,5 @@
 package me.yuuki.todoapp.service;
 
-import me.yuuki.todoapp.entity.User;
-import me.yuuki.todoapp.entity.UserExample;
 import me.yuuki.todoapp.model.Task;
 import me.yuuki.todoapp.model.TaskParser;
 import org.junit.jupiter.api.Test;
@@ -9,15 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
 
 @SpringBootTest(properties = "spring.profiles.active=test")
 @Transactional
@@ -211,15 +205,10 @@ class TaskServiceTest {
                 "(A) 2099-09-20 2088-02-12 一个未来的task"
         ));
         assert !taskService.select(userId, id).getDone();
-        taskService.doneTask(userId, id);
+        taskService.toggleTask(userId, id);
         assert taskService.select(userId, id).getDone();
-
-        try {
-            taskService.doneTask(userId, id);
-        } catch (Exception e) {
-            return;
-        }
-        throw new RuntimeException("Something wrong");
+        taskService.toggleTask(userId, id);
+        assert !taskService.select(userId, id).getDone();
     }
 
 

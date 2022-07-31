@@ -23,8 +23,8 @@ public class HelloController {
             "不积跬步，无以至千里；不积小流，无以成江海"
     };
 
-    @GetMapping(value = "/alive", produces = MediaType.TEXT_HTML_VALUE)
-    Result<Integer> alive() {
+    @GetMapping(value = "/alive")
+    public Result<Integer> alive() {
         return Result.ok(42,  msgs[new Random().nextInt(msgs.length)]);
     }
 }

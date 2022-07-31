@@ -1,5 +1,7 @@
 package me.yuuki.todoapp.service;
 
+import me.yuuki.todoapp.entity.User;
+
 import java.util.Optional;
 
 /**
@@ -32,5 +34,8 @@ public interface UserService {
      */
     boolean changePasswd(String email, String oldPasswd, String newPasswd);
 
-
+    /**
+     * 根据邮箱获取用户
+     */
+    Optional<User> getUserByEmail(String email);
 }

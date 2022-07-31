@@ -17,6 +17,6 @@ public class CaptchaController {
      */
     @RequestMapping("/captcha")
     public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        CaptchaUtil.out(200, 60, 7, request, response);
+        CaptchaUtil.out(190, 50, 7, request, response);
     }
 }

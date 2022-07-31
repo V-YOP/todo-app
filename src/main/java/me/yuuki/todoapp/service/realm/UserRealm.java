@@ -6,12 +6,15 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * register by {@link me.yuuki.todoapp.config.ShiroConfig}
  */
 public class UserRealm extends AuthorizingRealm {
+    private static final Logger logger = LoggerFactory.getLogger(UserRealm.class);
 
     UserService userService;
 
@@ -50,7 +53,10 @@ public class UserRealm extends AuthorizingRealm {
         String email = usernamePasswordToken.getUsername();
         String password = String.valueOf(usernamePasswordToken.getPassword());
         String strToken = userService.canLogin(email, password)
-                .orElseThrow(() -> new AuthenticationException("login failed"));
+                .orElseThrow(() -> {
+                    logger.info("用户 {} 登陆失败", email);
+                    return new AuthenticationException("login failed");
+                });
         usernamePasswordToken.setPassword(strToken.toCharArray());
         return new SimpleAuthenticationInfo(email, strToken, this.getName());
     }

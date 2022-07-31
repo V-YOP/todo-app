@@ -1,3 +1,4 @@
+
 yuuki-db/
 fmserver.log
 HELP.md
@@ -38,3 +39,4 @@ build/
 ### privicy ###
 
 **/*-prod.properties
+**/bootstrap.properties

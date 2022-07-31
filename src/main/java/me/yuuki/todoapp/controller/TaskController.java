@@ -2,13 +2,14 @@ package me.yuuki.todoapp.controller;
 
 
 import me.yuuki.todoapp.dto.Result;
+import me.yuuki.todoapp.entity.User;
 import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.model.Task;
 import me.yuuki.todoapp.model.TaskParser;
 import me.yuuki.todoapp.service.TaskService;
+import me.yuuki.todoapp.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresUser;
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +25,13 @@ import java.util.Optional;
 public class TaskController {
 
     private Integer getUserId() {
-        return Optional.ofNullable((Integer) SecurityUtils.getSubject().getPrincipal())
+        return Optional.ofNullable((String) SecurityUtils.getSubject().getPrincipal())
+                .flatMap(userService::getUserByEmail)
+                .map(User::getUserId)
                 .orElseThrow(() -> new RuntimeException("该接口需要添加鉴权！"));
     }
+
+    private UserService userService;
 
     private TaskService taskService;
     
@@ -40,6 +45,11 @@ public class TaskController {
     @Autowired
     public void setTaskService(TaskService taskService) {
         this.taskService = taskService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/get")
@@ -91,12 +101,12 @@ public class TaskController {
         return Result.ok(taskService.addTask(getUserId(), task));
     }
 
-    @PostMapping("done")
+    @PostMapping("toggle")
     @RequiresUser
     Result<Void> done(
             @Min(value = 0, message = "taskId 必须大于 0！")
             @RequestParam Long taskId) {
-        taskService.doneTask(getUserId(), taskId);
+        taskService.toggleTask(getUserId(), taskId);
         return Result.ok(null);
     }
 

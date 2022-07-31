@@ -20,7 +20,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
@@ -199,14 +198,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void doneTask(Integer userId, long taskId) {
+    public void toggleTask(Integer userId, long taskId) {
         Task task = select(userId, taskId);
-        if (task.getDone()) {
-            throw new ClientException("这个task已经完成了");
-        }
+
         TaskEntity entity = new TaskEntity();
         entity.setId(task.getId());
-        entity.setDone(true);
+        entity.setDone(!task.getDone());
         taskEntityMapper.updateByPrimaryKeySelective(entity);
     }
 

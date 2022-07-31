@@ -100,12 +100,12 @@ public interface TaskService {
     void deleteTask(Integer userId, long taskId);
 
     /**
-     * 完成Task
+     * 完成或取消完成Task
      * @param userId Task的用户ID
      * @param taskId Task的id
-     * @throws me.yuuki.todoapp.exception.ClientException 如果Task不存在或Task不属于该用户，或该Task已经被完成
+     * @throws me.yuuki.todoapp.exception.ClientException 如果Task不存在或Task不属于该用户
      */
-    void doneTask(Integer userId, long taskId);
+    void toggleTask(Integer userId, long taskId);
 
     /**
      * 获取在一段日期中任意一天 valid 的Task

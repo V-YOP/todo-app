@@ -1,12 +1,14 @@
 package me.yuuki.todoapp.service.impl;
 
-import com.aliyun.oss.ClientException;
 import me.yuuki.todoapp.entity.User;
 import me.yuuki.todoapp.entity.UserExample;
+import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.mapper.UserMapper;
+import me.yuuki.todoapp.service.EmailService;
 import me.yuuki.todoapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -24,6 +26,16 @@ public class UserServiceImpl implements UserService {
     public void setUserMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
+
+
+    private EmailService emailService;
+
+    @Autowired
+    public void setEmailServiceSupplier(EmailService emailService) {
+        this.emailService = emailService;
+        System.out.println(emailService);
+    }
+
 
     private final String salt = "1741a0d29ro!fF=-c1~`%^&*pyDDC1'?f0d8a7559615b51 world..750edew qe30';[;].i1ab93flo]o;??;!@#$%^&*";
     /**
@@ -61,18 +73,27 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 注册用户
+     * 注册用户，使用事务保证发送邮件失败后会回滚
      *
      * @param email  用户 email
      * @param passwd 用户密码
      * @throws me.yuuki.todoapp.exception.ClientException 如果用户ID已存在，或用户名，用户密码不合法
      */
     @Override
+    @Transactional
     public void signup(String email, String passwd) {
+        getUserByEmail(email).ifPresent(user -> {
+            throw new ClientException("该邮箱已被使用，请直接登录或者重置密码！");
+        });
+
         User user = new User();
         user.setEmail(email);
         user.setPasswd(encrypt(passwd));
         userMapper.insert(user);
+        emailService.sendEmail(
+                "【YouDo】注册成功！请查收你的密码",
+                String.format("<p>你的密码是：</p><h2>%s</h2><p>请尽快登陆并修改密码！</p>", passwd),
+                email);
     }
 
     @Override
@@ -97,7 +118,8 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-    private Optional<User> getUserByEmail(String email) {
+    @Override
+    public Optional<User> getUserByEmail(String email) {
         UserExample example = new UserExample();
         example.or().andEmailEqualTo(email);
         List<User> users = userMapper.selectByExample(example);

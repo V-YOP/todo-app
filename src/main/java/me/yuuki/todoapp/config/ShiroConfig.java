@@ -2,8 +2,13 @@ package me.yuuki.todoapp.config;
 
 import me.yuuki.todoapp.service.realm.UserRealm;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
+import org.apache.shiro.web.servlet.Cookie;
+import org.apache.shiro.web.servlet.ShiroHttpSession;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,5 +47,4 @@ public class ShiroConfig {
         defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
         return defaultAdvisorAutoProxyCreator;
     }
-
 }

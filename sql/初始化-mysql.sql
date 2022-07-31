@@ -1,8 +1,8 @@
 create table user_t
 (
     user_id  int  auto_increment primary key,
-    email    varchar(64) unique not null comment '用户的邮箱，用于登陆和展示'
-    passwd   varchar(64) not null comment '用户密码，需加密',
+    email    varchar(64) unique not null comment '用户的邮箱，用于登陆和展示',
+    passwd   varchar(64) not null comment '用户密码，需加密'
 );
 
 create table task_t
