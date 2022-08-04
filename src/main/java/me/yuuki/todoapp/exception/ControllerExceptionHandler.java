@@ -1,9 +1,6 @@
 package me.yuuki.todoapp.exception;
 
 import me.yuuki.todoapp.dto.Result;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authz.UnauthenticatedException;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
@@ -71,6 +67,8 @@ public class ControllerExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(Result.fail(null, "入参校验失败！" + e.getLocalizedMessage()));
     }
+/*
+    // 鉴权相关异常
 
     @ExceptionHandler({
             AuthenticationException.class
@@ -96,6 +94,7 @@ public class ControllerExceptionHandler {
                 .body(Result.fail(null, "你没有权限访问此接口！"));
     }
 
+*/
     /**
      * 客户端的异常，抛40x
      */

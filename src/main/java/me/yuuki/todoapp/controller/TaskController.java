@@ -2,19 +2,18 @@ package me.yuuki.todoapp.controller;
 
 
 import me.yuuki.todoapp.dto.Result;
-import me.yuuki.todoapp.entity.User;
 import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.model.Task;
 import me.yuuki.todoapp.model.TaskParser;
 import me.yuuki.todoapp.service.TaskService;
 import me.yuuki.todoapp.service.UserService;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +24,7 @@ import java.util.Optional;
 public class TaskController {
 
     private Integer getUserId() {
-        return Optional.ofNullable((String) SecurityUtils.getSubject().getPrincipal())
-                .flatMap(userService::getUserByEmail)
-                .map(User::getUserId)
-                .orElseThrow(() -> new RuntimeException("该接口需要添加鉴权！"));
+        return 1;
     }
 
     private UserService userService;
@@ -53,7 +49,7 @@ public class TaskController {
     }
 
     @GetMapping("/get")
-    @RequiresUser
+    
     Result<Task> get(
             @Min(value = 0, message = "taskId 必须大于 0！")
             @RequestParam long taskId) {
@@ -61,13 +57,13 @@ public class TaskController {
     }
 
     @GetMapping("/get/all")
-    @RequiresUser
+    
     Result<List<Task>> all() {
         return Result.ok(taskService.selectAllTask(getUserId()));
     }
 
     @GetMapping("/get/valid")
-    @RequiresUser
+    
     Result<List<Task>> valid(@RequestParam(name = "date", required = false) Optional<Date> date) {
         return date.map(d -> taskService.selectValidTask(getUserId(), d))
                 .map(Result::ok)
@@ -75,13 +71,13 @@ public class TaskController {
     }
 
     @GetMapping("/get/unfinished")
-    @RequiresUser
+    
     Result<List<Task>> unfinished() {
         return Result.ok(taskService.selectUnfinishedTask(getUserId()));
     }
 
     @GetMapping("/get/outdated")
-    @RequiresUser
+    
     Result<List<Task>> outdated() {
         return Result.ok(taskService.selectOutDatedTask(getUserId()));
     }
@@ -92,7 +88,7 @@ public class TaskController {
      * @return 添加的task的id
      */
     @PostMapping("add")
-    @RequiresUser
+    
     Result<Long> add(@Size(min = 1, max = 1, message = "请求体数组大小必须为1！")
                      @RequestBody List<@NotBlank(message = "输入字符串不能为空！") String> taskStr) {
         Task task = ClientException.tryMe(
@@ -102,7 +98,7 @@ public class TaskController {
     }
 
     @PostMapping("toggle")
-    @RequiresUser
+    
     Result<Void> done(
             @Min(value = 0, message = "taskId 必须大于 0！")
             @RequestParam Long taskId) {
@@ -111,7 +107,7 @@ public class TaskController {
     }
 
     @PostMapping("del")
-    @RequiresUser
+    
     Result<Void> del(
             @Min(value = 0, message = "taskId 必须大于 0！")
             @RequestParam Long taskId) {
