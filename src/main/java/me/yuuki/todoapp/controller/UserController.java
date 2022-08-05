@@ -2,6 +2,7 @@ package me.yuuki.todoapp.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.SaLoginModel;
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import com.wf.captcha.utils.CaptchaUtil;
 import me.yuuki.todoapp.dto.Result;
@@ -17,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Email;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -55,9 +55,8 @@ public class UserController {
 
     /**
      * 注册接口，必须使用验证码等手段防止有人捣乱
-     * @param email
-     * @param verCode
-     * @return
+     * @param email 用户邮箱，需能够接收邮件
+     * @param verCode 验证码
      */
     @PostMapping("signup")
     public Result<Void> signup(
@@ -70,7 +69,7 @@ public class UserController {
             throw new ClientException("验证码不正确！");
         }
         CaptchaUtil.clear(request);
-        String randomPasswd = UUID.randomUUID().toString().replaceAll("-","").substring(0, 12);
+        String randomPasswd = UUID.randomUUID().toString().replaceAll("-","").substring(0, 8);
         userService.signup(email, randomPasswd, true);
         return Result.ok(null);
     }
@@ -83,9 +82,7 @@ public class UserController {
 
     @SaCheckLogin
     @GetMapping("status")
-    public Result<Map<String, String>> status() {
-        return Result.ok(new HashMap<String,String>(){{
-
-        }});
+    public Result<SaTokenInfo> status() {
+        return Result.ok(StpUtil.getTokenInfo());
     }
 }

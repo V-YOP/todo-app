@@ -28,13 +28,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * Sa 框架的拦截器，用于启动注解鉴权，以及配置全局权限
-     * @param registry
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 全局不鉴权
-        registry.addInterceptor(new SaRouteInterceptor())
-                .addPathPatterns("/**");
+        // 全局鉴权
+        // registry.addInterceptor(new SaRouteInterceptor()).addPathPatterns("/**");
 
         // 启用注解
         registry.addInterceptor(new SaAnnotationInterceptor()).addPathPatterns("/**");
