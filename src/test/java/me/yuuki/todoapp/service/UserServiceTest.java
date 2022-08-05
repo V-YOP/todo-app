@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 @SpringBootTest(properties = "spring.profiles.active=test")
@@ -50,7 +49,7 @@ class UserServiceTest {
     @Test
     void test() {
         String email = randomEmail(16);;
-        userService.signup(email, "wochao");
+        userService.signup(email, "wochao", false);
         User user = getUserByEmail(email);
         assert !user.getPasswd().equals("wochao");
         System.out.println(user.getPasswd());
@@ -61,7 +60,7 @@ class UserServiceTest {
     @Test
     void changePasswd() {
         String email = randomEmail(16);;
-        userService.signup(email, "wochao");
+        userService.signup(email, "wochao", false);
         assert userService.canLogin(email, "wochao").isPresent();
         assert userService.changePasswd(email, "wochao", "ruaruarua");
         assert userService.canLogin(email, "ruaruarua").isPresent();

@@ -1,7 +1,11 @@
 package me.yuuki.todoapp.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.stp.SaLoginModel;
+import cn.dev33.satoken.stp.StpUtil;
 import com.wf.captcha.utils.CaptchaUtil;
 import me.yuuki.todoapp.dto.Result;
+import me.yuuki.todoapp.entity.User;
 import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.service.UserService;
 import org.slf4j.Logger;
@@ -13,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Email;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -32,16 +37,20 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public Result<Void> login(
+    public Result<String> login(
             @Email
             @RequestParam String email,
-            @RequestParam String passwd,
-            @RequestParam(defaultValue = "false") Boolean rememberMe) {
-
-        logger.info("用户登陆, email: {}, rememberMe: {}", email, rememberMe);
-
-        logger.info("用户登录成功, email: {}", email);
-        return Result.ok(null);
+            @RequestParam String passwd) {
+        logger.info("用户登陆, email: {}", email);
+        User user = userService.canLogin(email, passwd).orElseThrow(() -> {
+            logger.info("用户 {} 登陆失败", email);
+            return new ClientException("用户名或密码错误！");
+        });
+        StpUtil.login(user.getEmail(),
+                SaLoginModel.create()
+                        .setExtra("id", user.getUserId()));
+        logger.info("用户 {} 登录成功", email);
+        return Result.ok(StpUtil.getTokenValueNotCut());
     }
 
     /**
@@ -62,28 +71,21 @@ public class UserController {
         }
         CaptchaUtil.clear(request);
         String randomPasswd = UUID.randomUUID().toString().replaceAll("-","").substring(0, 12);
-        userService.signup(email, randomPasswd);
-
+        userService.signup(email, randomPasswd, true);
         return Result.ok(null);
     }
 
     @GetMapping("isLogin")
-    public boolean isLogin() {;
-        return true;
+    public boolean isLogin() {
+        return StpUtil.isLogin();
     }
 
+
+    @SaCheckLogin
     @GetMapping("status")
     public Result<Map<String, String>> status() {
         return Result.ok(new HashMap<String,String>(){{
 
         }});
-    }
-
-    @GetMapping("logout")
-    public Result<Void> logout() {
-        if (!isLogin())
-            throw new ClientException("你并未登陆！");
-
-        return Result.ok(null);
     }
 }

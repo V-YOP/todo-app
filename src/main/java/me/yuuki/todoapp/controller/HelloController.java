@@ -1,11 +1,14 @@
 package me.yuuki.todoapp.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.stp.StpUtil;
 import me.yuuki.todoapp.dto.Result;
 import me.yuuki.todoapp.exception.ClientException;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Random;

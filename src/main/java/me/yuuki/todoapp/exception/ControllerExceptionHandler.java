@@ -1,5 +1,6 @@
 package me.yuuki.todoapp.exception;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import me.yuuki.todoapp.dto.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +96,15 @@ public class ControllerExceptionHandler {
     }
 
 */
+
+    @ExceptionHandler({
+            NotLoginException.class
+    })
+    ResponseEntity<Object> notLogin(NotLoginException e) {
+        return ResponseEntity.badRequest()
+                .body(new Result<Void>("NOT_LOGIN",  "你没有登陆！", null));
+    }
+
     /**
      * 客户端的异常，抛40x
      */
@@ -126,6 +136,9 @@ public class ControllerExceptionHandler {
      */
     @ExceptionHandler
     ResponseEntity<Object> handlerAllException(Throwable e) {
+        if (e.getClass().getName().startsWith("cn.dev33.satoken.exception")) {
+            // ...
+        }
         logger.error("未被捕获到的异常：", e);
         if (debug) {
             return ResponseEntity

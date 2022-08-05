@@ -1,6 +1,8 @@
 package me.yuuki.todoapp.controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.stp.StpUtil;
 import me.yuuki.todoapp.dto.Result;
 import me.yuuki.todoapp.exception.ClientException;
 import me.yuuki.todoapp.model.Task;
@@ -21,10 +23,11 @@ import java.util.Optional;
 @RestController
 @Validated
 @RequestMapping("/task")
+@SaCheckLogin
 public class TaskController {
 
     private Integer getUserId() {
-        return 1;
+        return (Integer) StpUtil.getExtra("id");
     }
 
     private UserService userService;
