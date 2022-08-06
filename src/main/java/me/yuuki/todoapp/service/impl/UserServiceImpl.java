@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> canLogin(String email, String passwd) {
         User user = getUserByEmail(email)
-                .orElseThrow(() -> new ClientException("用户不存在！"));
+                .orElseThrow(() -> new ClientException("用户名或密码错误！"));
         return Optional.of(user)
                 .filter(u -> BCrypt.checkpw(passwd, u.getPasswd()));
     }
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean changePasswd(String email, String oldPasswd, String newPasswd) {
         User user = getUserByEmail(email)
-                .orElseThrow(() -> new ClientException("用户不存在！"));
+                .orElseThrow(() -> new ClientException("用户名或密码错误！"));
 
         if (!BCrypt.checkpw(oldPasswd, user.getPasswd())) {
             return false;
